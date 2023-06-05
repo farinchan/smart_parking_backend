@@ -37,6 +37,12 @@ controller.register = async (req, res) => {
             user_status: 1
         })
 
+        const saldo = await model.saldo.create({
+            uid: random,
+            saldo_sisa: 0,
+            saldo_terpakai: 0
+        })
+
         res.json({
             message: "User Added Succesfully",
             result

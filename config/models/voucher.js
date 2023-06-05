@@ -1,22 +1,34 @@
 const { DataTypes } = require('sequelize');
 const db = require("../database/mysql");
 
-const User = db.define('saldo', {
+const User = db.define('voucher', {
     // Model attributes are defined here
-    saldo_id: {
+    voucher_id : {
         type: DataTypes.INTEGER,
         allowNull: true,
         primaryKey: true
     },
-    uid: {
+    voucher_nomor: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    saldo_sisa: {
+    voucher_nominal: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    saldo_terpakai: {
+    voucher_expired: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
+    voucher_digunakan: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
+    },
+    uid: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    voucher_status: {
         type: DataTypes.INTEGER,
         allowNull: true
     }

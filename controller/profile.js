@@ -7,7 +7,7 @@ let controller = {}
 controller.index = async function (req, res) {
 
     let result = await model.user.findByPk(req.user.user_id);
-    delete result.user_password;
+
     res.json({
         messsage: "success",
         result

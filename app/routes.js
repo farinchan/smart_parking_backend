@@ -12,4 +12,6 @@ router.post('/login', controller.auth.login);
 router.get('/profile', tokenValidate, controller.profile.index);
 router.put('/profile/update', controller.profile.update);
 
+router.get('/saldo', tokenValidate, controller.saldo.index);
+
 module.exports = router
