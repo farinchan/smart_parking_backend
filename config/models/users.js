@@ -24,6 +24,10 @@ const User = db.define('user', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    user_fcm: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     user_telegram: {
         type: DataTypes.STRING,
         allowNull: true

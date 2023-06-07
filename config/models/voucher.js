@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const db = require("../database/mysql");
 
-const User = db.define('voucher', {
+const voucher = db.define('voucher', {
     // Model attributes are defined here
-    voucher_id : {
+    voucher_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
         primaryKey: true
@@ -40,4 +40,4 @@ const User = db.define('voucher', {
 
 // console.log(User === db.models.User); // true
 
-module.exports = User
+module.exports = voucher

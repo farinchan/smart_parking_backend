@@ -1,25 +1,29 @@
 const { DataTypes } = require('sequelize');
 const db = require("../database/mysql");
 
-const Saldo = db.define('saldo', {
+const IsiSaldo = db.define('isi_saldo', {
     // Model attributes are defined here
-    saldo_id: {
+    isi_saldo_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        primaryKey: true
+        primaryKey: true,
     },
     uid: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    saldo_sisa: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+    isi_saldo_tanggal: {
+        type: DataTypes.DATEONLY,
+        allowNull: true
     },
-    saldo_terpakai: {
+    isi_saldo_jumlah: {
         type: DataTypes.INTEGER,
         allowNull: true
-    }
+    },
+    admin_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
 }, {
     // Other model options go here
     freezeTableName: true,
@@ -28,4 +32,4 @@ const Saldo = db.define('saldo', {
 
 // console.log(User === db.models.User); // true
 
-module.exports = Saldo
+module.exports = IsiSaldo
