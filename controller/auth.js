@@ -55,6 +55,7 @@ controller.login = async (req, res) => {
 
     const email = req.body.email
     const password = req.body.password
+    const fcm = req.body.fcm
 
     //validation Data Check
     const validationError = validation.loginValidation(req.body).error
@@ -65,6 +66,10 @@ controller.login = async (req, res) => {
         // //check password
         const validPassword = await bcrypt.compare(password, result.user_password)
         if (!validPassword) return res.status(400).json({ message: "Email or password wrong!" })
+
+        result.update({
+            user_fcm: fcm
+        })
 
         //create an assign a token
         const token = jwt.sign({ user_id: result.uid }, process.env.TOKEN_SECRET)
@@ -78,6 +83,26 @@ controller.login = async (req, res) => {
         });
     } else {
         res.status(400).json({ message: "Email or password wrong!" })
+    }
+
+};
+
+controller.fcm = async (req, res) => {
+
+    const fcm = req.body.fcm
+
+    let user = await model.user.findByPk(req.user.user_id);
+    if (user !== null) {
+        user.update({
+            user_fcm: fcm
+        })
+        res.json({
+            status: "success",
+            messsage: "FCM is Update",
+            user
+        });
+    } else {
+        res.status(400).json({ status: "failed", message: "User Not Found" })
     }
 
 };

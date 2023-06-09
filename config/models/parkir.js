@@ -18,11 +18,11 @@ const Parkir = db.define('parkir', {
         allowNull: false,
     },
     parkir_masuk: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     parkir_keluar: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false
     },
     parkir_foto_kendaraan: {

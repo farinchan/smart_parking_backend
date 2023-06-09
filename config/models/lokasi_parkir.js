@@ -3,12 +3,16 @@ const db = require("../database/mysql");
 
 const LokasiParkir = db.define('lokasi_parkir', {
     // Model attributes are defined here
-    lokasi_id : {
+    lokasi_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
         primaryKey: true
     },
     lokasi_nama: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    lokasi_jenis: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -42,7 +46,7 @@ const LokasiParkir = db.define('lokasi_parkir', {
     },
 }, {
     // Other model options go here
-    freezeTableName: false,
+    freezeTableName: true,
     timestamps: false
 });
 
