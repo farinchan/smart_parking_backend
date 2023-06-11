@@ -12,8 +12,8 @@ controller.index = async function (req, res) {
     })
 
     let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+    //
 
-    
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Mengatur waktu ke awal hari ini
 
