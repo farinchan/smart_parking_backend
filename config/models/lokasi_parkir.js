@@ -28,14 +28,6 @@ const LokasiParkir = db.define('lokasi_parkir', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    lokasi_slot_tersedia: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    lokasi_jumlah_slot: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
     lokasi_jumlah_slot: {
         type: DataTypes.INTEGER,
         allowNull: false
