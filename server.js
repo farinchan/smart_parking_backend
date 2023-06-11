@@ -17,6 +17,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // //routes middleware
 app.use("/api", Routes)
 
-app.listen(3000, () => {
+app.listen(5000, () => {
     console.log("Server is running on example http://localhost:3000");
 });

@@ -1,3 +1,4 @@
 .env
 node_modules
+*.json
 smart-paarking-firebase-adminsdk-nr2hq-4c48e47ee7.json
