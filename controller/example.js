@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const model = require("../config/models");
 
 let controller = {}
@@ -121,20 +122,42 @@ controller.index = async function (req, res) {
 
   const lokasi = await model.LokasiParkir.findAndCountAll();
 
-  let lokasi_parkir = []
-  if (lokasi != {}) {
-    lokasi.rows.forEach(element => {
-      lokasi_parkir.push({
-        lokasi_id: element.lokasi_id,
-        nama: element.lokasi_nama,
-        jenis: element.lokasi_jenis,
-        slot_tersedia: element.lokasi_slot_tersedia,
-        jumlah_slot: element.lokasi_jumlah_slot,
-        nilai_rekomendasi: fuzzy_sugeno(element.lokasi_jarak, element.lokasi_slot_tersedia)
-      })
+  const slot_tersedia = async (lokasiId) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Mengatur waktu ke awal hari ini
+    return await model.parkir.count({
+      where: {
+        lokasi_id: lokasiId,
+        parkir_status: 1,
+        parkir_masuk: {
+          [Op.gte]: today,
+          [Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Ditambahkan 1 hari ke waktu akhir untuk mencakup data hingga akhir hari ini
+        },
+      },
     });
   }
+
+  // console.log("INI Hasilnya : " + ((await slot_tersedia(2))));
+
+
+  let lokasi_parkir = []
+
+  for (let index = 0; index < lokasi.count; index++) {
+    let slotTersedia = await slot_tersedia(lokasi.rows[index].lokasi_id)
+    lokasi_parkir.push({
+      lokasi_id: lokasi.rows[index].lokasi_id,
+      nama: lokasi.rows[index].lokasi_nama,
+      jenis: lokasi.rows[index].lokasi_jenis,
+      slot_tersedia: lokasi.rows[index].lokasi_jumlah_slot - slotTersedia,
+      jumlah_slot: lokasi.rows[index].lokasi_jumlah_slot,
+      nilai_rekomendasi: fuzzy_sugeno(lokasi.rows[index].lokasi_jarak, slotTersedia)
+    })
+  }
+
+
   lokasi_parkir.sort((a, b) => b.nilai_rekomendasi - a.nilai_rekomendasi);
+
+
   res.json({
     status: "success",
     Messsage: "Fuzzy Recomend Succesfully",

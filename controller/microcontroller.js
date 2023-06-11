@@ -1,5 +1,6 @@
 const model = require("../config/models/index")
 var admin = require("firebase-admin");
+const { Op } = require('sequelize');
 
 var serviceAccount = require("../smart-paarking-firebase-adminsdk-nr2hq-4c48e47ee7.json");
 
@@ -45,30 +46,30 @@ controller.index = async function (req, res) {
                 saldo_terpakai: saldo.saldo_terpakai + tarif_kendaraan
             })
 
-            function fuzzy_sugeno(input_jarak, input_kapasitas) {
+            function fuzzy_sugeno_roda2(input_jarak, input_kapasitas) {
                 // Input variabel jarak
                 let j_dekat, j_sedang, j_jauh;
-                if (input_jarak <= 200) {
+                if (input_jarak <= 155) {
                     j_dekat = 1;
-                } else if (input_jarak >= 200 && input_jarak <= 400) {
-                    j_dekat = (400 - input_jarak) / 200;
-                } else if (input_jarak >= 400) {
+                } else if (input_jarak >= 155 && input_jarak <= 310) {
+                    j_dekat = (310 - input_jarak) / 155;
+                } else if (input_jarak >= 310) {
                     j_dekat = 0;
                 }
 
-                if (input_jarak <= 200 || input_jarak >= 600) {
+                if (input_jarak <= 155 || input_jarak >= 465) {
                     j_sedang = 0;
-                } else if (input_jarak >= 200 && input_jarak <= 400) {
-                    j_sedang = (input_jarak - 200) / 200;
-                } else if (input_jarak >= 400 && input_jarak <= 600) {
-                    j_sedang = (600 - input_jarak) / 200;
+                } else if (input_jarak >= 155 && input_jarak <= 310) {
+                    j_sedang = (input_jarak - 155) / 155;
+                } else if (input_jarak >= 310 && input_jarak <= 465) {
+                    j_sedang = (465 - input_jarak) / 155;
                 }
 
-                if (input_jarak <= 400) {
+                if (input_jarak <= 310) {
                     j_jauh = 0;
-                } else if (input_jarak >= 400 && input_jarak <= 600) {
-                    j_jauh = (input_jarak - 400) / 200;
-                } else if (input_jarak >= 600) {
+                } else if (input_jarak >= 310 && input_jarak <= 465) {
+                    j_jauh = (input_jarak - 310) / 155;
+                } else if (input_jarak >= 465) {
                     j_jauh = 1;
                 }
 
@@ -160,22 +161,170 @@ controller.index = async function (req, res) {
                 return hasil_fuzzy_sugeno;
             }
 
-            const lokasi = await model.LokasiParkir.findAndCountAll();
+            function fuzzy_sugeno_roda4(input_jarak, input_kapasitas) {
+                // Input variabel jarak
+                let j_dekat, j_sedang, j_jauh;
+                if (input_jarak <= 155) {
+                    j_dekat = 1;
+                } else if (input_jarak >= 155 && input_jarak <= 310) {
+                    j_dekat = (310 - input_jarak) / 155;
+                } else if (input_jarak >= 310) {
+                    j_dekat = 0;
+                }
 
-            let lokasi_parkir = []
-            if (lokasi != {}) {
-                lokasi.rows.forEach(element => {
-                    lokasi_parkir.push({
-                        lokasi_id: element.lokasi_id,
-                        nama: element.lokasi_nama,
-                        jenis: element.lokasi_jenis,
-                        slot_tersedia: element.lokasi_slot_tersedia,
-                        jumlah_slot: element.lokasi_jumlah_slot,
-                        nilai_rekomendasi: fuzzy_sugeno(element.lokasi_jarak, element.lokasi_slot_tersedia)
-                    })
+                if (input_jarak <= 155 || input_jarak >= 465) {
+                    j_sedang = 0;
+                } else if (input_jarak >= 155 && input_jarak <= 310) {
+                    j_sedang = (input_jarak - 155) / 155;
+                } else if (input_jarak >= 310 && input_jarak <= 465) {
+                    j_sedang = (465 - input_jarak) / 155;
+                }
+
+                if (input_jarak <= 310) {
+                    j_jauh = 0;
+                } else if (input_jarak >= 310 && input_jarak <= 465) {
+                    j_jauh = (input_jarak - 310) / 155;
+                } else if (input_jarak >= 465) {
+                    j_jauh = 1;
+                }
+
+                // Input variabel kapasitas
+                let k_longgar, k_cukup, k_padat;
+                if (input_kapasitas <= 8) {
+                    k_longgar = 1;
+                } else if (input_kapasitas >= 8 && input_kapasitas <= 16) {
+                    k_longgar = (16 - input_kapasitas) / 8;
+                } else if (input_kapasitas >= 16) {
+                    k_longgar = 0;
+                }
+
+                if (input_kapasitas <= 8 || input_kapasitas >= 32) {
+                    k_cukup = 0;
+                } else if (input_kapasitas >= 8 && input_kapasitas <= 16) {
+                    k_cukup = (input_kapasitas - 8) / 8;
+                } else if (input_kapasitas >= 16 && input_kapasitas <= 32) {
+                    k_cukup = (32 - input_kapasitas) / 16;
+                }
+
+                if (input_kapasitas <= 16) {
+                    k_padat = 0;
+                } else if (input_kapasitas >= 16 && input_kapasitas <= 32) {
+                    k_padat = (input_kapasitas - 16) / 16;
+                } else if (input_kapasitas >= 32) {
+                    k_padat = 1;
+                }
+
+                // Nilai jarak
+                let nilai_jarak, nilai_kapasitas;
+                if (j_dekat > j_sedang) {
+                    nilai_jarak = j_dekat;
+                } else if (j_sedang > j_jauh) {
+                    nilai_jarak = j_sedang;
+                } else {
+                    nilai_jarak = j_jauh;
+                }
+
+                // Nilai kapasitas
+                if (k_longgar > k_cukup) {
+                    nilai_kapasitas = k_longgar;
+                } else if (k_cukup > k_padat) {
+                    nilai_kapasitas = k_cukup;
+                } else {
+                    nilai_kapasitas = k_padat;
+                }
+
+                const rendah = 40;
+                const sedang = 60;
+                const tinggi = 80;
+
+                // Rule
+                const a_rule1 = Math.min(k_longgar, j_dekat);
+                const a_rule2 = Math.min(k_longgar, j_sedang);
+                const a_rule3 = Math.min(k_longgar, j_jauh);
+                const a_rule4 = Math.min(k_cukup, j_dekat);
+                const a_rule5 = Math.min(k_cukup, j_sedang);
+                const a_rule6 = Math.min(k_cukup, j_jauh);
+                const a_rule7 = Math.min(k_padat, j_dekat);
+                const a_rule8 = Math.min(k_padat, j_sedang);
+                const a_rule9 = Math.min(k_padat, j_jauh);
+
+                // Jumlah ai.zi
+                const jml_aizi =
+                    a_rule1 * tinggi +
+                    a_rule2 * tinggi +
+                    a_rule3 * sedang +
+                    a_rule4 * tinggi +
+                    a_rule5 * sedang +
+                    a_rule6 * rendah +
+                    a_rule7 * sedang +
+                    a_rule8 * rendah +
+                    a_rule9 * rendah;
+                // Jumlah ai
+                const jml_ai =
+                    a_rule1 +
+                    a_rule2 +
+                    a_rule3 +
+                    a_rule4 +
+                    a_rule5 +
+                    a_rule6 +
+                    a_rule7 +
+                    a_rule8 +
+                    a_rule9;
+
+                // Difuzzyfikasi
+                const hasil_fuzzy_sugeno = jml_aizi / jml_ai;
+                return hasil_fuzzy_sugeno;
+            }
+
+
+
+            const slot_tersedia = async (lokasiId) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Mengatur waktu ke awal hari ini
+                return await model.parkir.count({
+                    where: {
+                        lokasi_id: lokasiId,
+                        parkir_status: 1,
+                        parkir_masuk: {
+                            [Op.gte]: today,
+                            [Op.lt]: new Date(today.getTime() + 24 * 60 * 60 * 1000), // Ditambahkan 1 hari ke waktu akhir untuk mencakup data hingga akhir hari ini
+                        },
+                    },
                 });
             }
-            lokasi_parkir.sort((a, b) => b.nilai_rekomendasi - a.nilai_rekomendasi);
+
+            let lokasi_parkir = []
+            if (jenis_kendaraan == "roda 4" || jenis_kendaraan == "roda 4\\n") {
+                const lokasi = await model.LokasiParkir.findAndCountAll({ where: { lokasi_jenis: "roda 4" } });
+                for (let index = 0; index < lokasi.count; index++) {
+                    let slotTersedia = await slot_tersedia(lokasi.rows[index].lokasi_id)
+                    lokasi_parkir.push({
+                        lokasi_id: lokasi.rows[index].lokasi_id,
+                        nama: lokasi.rows[index].lokasi_nama,
+                        jenis: lokasi.rows[index].lokasi_jenis,
+                        slot_tersedia: lokasi.rows[index].lokasi_jumlah_slot - slotTersedia,
+                        jumlah_slot: lokasi.rows[index].lokasi_jumlah_slot,
+                        nilai_rekomendasi: fuzzy_sugeno_roda4(lokasi.rows[index].lokasi_jarak, slotTersedia)
+                    })
+                }
+                lokasi_parkir.sort((a, b) => b.nilai_rekomendasi - a.nilai_rekomendasi);
+            } else if (jenis_kendaraan == "roda 2" || jenis_kendaraan == "roda 2\\n") {
+                const lokasi = await model.LokasiParkir.findAndCountAll({ where: { lokasi_jenis: "roda 2" } });
+                for (let index = 0; index < lokasi.count; index++) {
+                    let slotTersedia = await slot_tersedia(lokasi.rows[index].lokasi_id)
+                    lokasi_parkir.push({
+                        lokasi_id: lokasi.rows[index].lokasi_id,
+                        nama: lokasi.rows[index].lokasi_nama,
+                        jenis: lokasi.rows[index].lokasi_jenis,
+                        slot_tersedia: lokasi.rows[index].lokasi_jumlah_slot - slotTersedia,
+                        jumlah_slot: lokasi.rows[index].lokasi_jumlah_slot,
+                        nilai_rekomendasi: fuzzy_sugeno_roda2(lokasi.rows[index].lokasi_jarak, slotTersedia)
+                    })
+                }
+                lokasi_parkir.sort((a, b) => b.nilai_rekomendasi - a.nilai_rekomendasi);
+            }
+
+
             // This registration token comes from the client FCM SDKs.
             const registrationToken = user.user_fcm;
 
@@ -185,7 +334,7 @@ controller.index = async function (req, res) {
                     body: 'Berhasil Mendapatkan Rekomendasi Tempat Parkir'
                 },
                 data: {
-
+                    parkir_id: JSON.stringify(parkir.parkir_id),
                     lokasi_parkir: JSON.stringify(lokasi_parkir)
                 },
                 token: registrationToken
@@ -238,10 +387,178 @@ controller.pesanParkir = async function (req, res) {
 
     res.json({
         status: "success",
-        messsage: "Parkir Successfully",
+        message: "Berhasil Mengambil Lokasi Parkir",
         parkir
     })
 
 }
+
+controller.gate2 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    console.log(req.body);
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "A1") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat"
+        })
+    }
+
+
+}
+controller.gate3 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "A2") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate4 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "B1") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate5 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "B2") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate6 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "C1") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+}
+
+
+controller.gate7 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_status: 1 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "C2") {
+        res.json({
+            status: "success",
+            message: "Silahkan Masuk"
+        })
+    } else {
+        res.json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+}
+
 
 module.exports = controller;
