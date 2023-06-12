@@ -65,7 +65,7 @@ controller.login = async (req, res) => {
     if (result !== null) {
         // //check password
         const validPassword = await bcrypt.compare(password, result.user_password)
-        if (!validPassword) return res.status(400).json({ message: "Email or password wrong!" })
+        if (!validPassword) return res.status(400).json({status : "failed", message: "Email or password wrong!" })
 
         result.update({
             user_fcm: fcm
@@ -76,13 +76,14 @@ controller.login = async (req, res) => {
         res.header("auth-token", token)
 
         res.json({
+            status : "success",
             messsage: "logged In",
             token: token,
             name: result.user_nama,
             email: result.user_email
         });
     } else {
-        res.status(400).json({ message: "Email or password wrong!" })
+        res.status(400).json({status : "failed", message: "Email or password wrong!" })
     }
 
 };
