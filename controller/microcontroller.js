@@ -410,12 +410,12 @@ controller.gate2 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "A1") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat"
         })
@@ -437,12 +437,12 @@ controller.gate3 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "A2") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat Parkir"
         })
@@ -465,12 +465,12 @@ controller.gate4 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "B1") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat Parkir"
         })
@@ -493,12 +493,12 @@ controller.gate5 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "B2") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat Parkir"
         })
@@ -521,12 +521,12 @@ controller.gate6 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "C1") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat Parkir"
         })
@@ -548,12 +548,12 @@ controller.gate7 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "C2") {
-        res.json({
+        res.status(200).json({
             status: "success",
             message: "Silahkan Masuk"
         })
     } else {
-        res.json({
+        res.status(400).json({
             status: "failed",
             message: "Anda Salah Tempat Parkir"
         })
