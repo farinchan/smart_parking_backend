@@ -598,29 +598,23 @@ controller.gate6 = async function (req, res) {
 
     if (CheckParkir.lokasi_nama == "C1") {
 
-        if (parkir_done == false) {
-            if (parkir.parkir_done == false) {
-                if (parkir.parkir_status == false) {
-                    parkir.update({
-                        parkir_status: 1
-                    })
 
-                } else if (parkir.parkir_status == true) {
-                    parkir.update({
-                        parkir_status: 0,
-                        parkir_done: 1
-                    })
-                }
-                res.status(200).json({
-                    status: "success",
-                    message: "Silahkan Masuk"
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
+                parkir.update({
+                    parkir_status: 1
                 })
-            } else {
-                res.status(400).json({
-                    status: "failed",
-                    message: "anda sudah melakukan parkir"
+
+            } else if (parkir.parkir_status == true) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
                 })
             }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
         } else {
             res.status(400).json({
                 status: "failed",
