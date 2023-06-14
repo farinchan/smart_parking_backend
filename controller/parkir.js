@@ -9,7 +9,7 @@ controller.index = async function (req, res) {
 
 
     let parkir = await model.parkir.findOne({
-        where: { uid: req.user.user_id, parkir_status: 1 },
+        where: { uid: req.user.user_id, parkir_done: 0 },
         order: [['parkir_masuk', 'DESC']],
     })
 
