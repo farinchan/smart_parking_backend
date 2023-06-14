@@ -39,7 +39,7 @@ const Parkir = db.define('parkir', {
     },
     parkir_done: {
         type: DataTypes.BOOLEAN,
-        allowNull: false
+        allowNull: true
     },
     lokasi_id: {
         type: DataTypes.INTEGER,
