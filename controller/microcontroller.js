@@ -401,7 +401,7 @@ controller.gate2 = async function (req, res) {
     console.log(req.body);
 
     let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
+        where: { uid: uid, parkir_done: 0 },
         order: [['parkir_masuk', 'DESC']],
     })
     console.log(parkir);
@@ -411,129 +411,13 @@ controller.gate2 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "A1") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
-    } else {
-        res.status(400).json({
-            status: "failed",
-            message: "Anda Salah Tempat"
-        })
-    }
-
-
-}
-controller.gate3 = async function (req, res) {
-
-    const uid = req.body.uid
-
-    let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
-        order: [['parkir_masuk', 'DESC']],
-    })
-    console.log(parkir);
-    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
-
-    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
-
-    if (CheckParkir.lokasi_nama == "A2") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
-    } else {
-        res.status(400).json({
-            status: "failed",
-            message: "Anda Salah Tempat Parkir"
-        })
-    }
-
-
-}
-
-controller.gate4 = async function (req, res) {
-
-    const uid = req.body.uid
-
-    let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
-        order: [['parkir_masuk', 'DESC']],
-    })
-    console.log(parkir);
-    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
-
-    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
-
-    if (CheckParkir.lokasi_nama == "B1") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
-    } else {
-        res.status(400).json({
-            status: "failed",
-            message: "Anda Salah Tempat Parkir"
-        })
-    }
-
-
-}
-
-controller.gate5 = async function (req, res) {
-
-    const uid = req.body.uid
-
-    let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
-        order: [['parkir_masuk', 'DESC']],
-    })
-    console.log(parkir);
-    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
-
-    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
-
-    if (CheckParkir.lokasi_nama == "B2") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
-    } else {
-        res.status(400).json({
-            status: "failed",
-            message: "Anda Salah Tempat Parkir"
-        })
-    }
-
-
-}
-
-controller.gate6 = async function (req, res) {
-
-    const uid = req.body.uid
-
-    let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
-        order: [['parkir_masuk', 'DESC']],
-    })
-
-
-
-
-    console.log(parkir);
-    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
-
-    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
-
-    if (CheckParkir.lokasi_nama == "C1") {
-
-        if (parkir_done == false) {
-            if (parkir.parkir_status == 0) {
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
                 parkir.update({
                     parkir_status: 1
                 })
 
-            } else if (parkir.parkir_status == 1) {
+            } else if (parkir.parkir_status == true) {
                 parkir.update({
                     parkir_status: 0,
                     parkir_done: 1
@@ -556,6 +440,200 @@ controller.gate6 = async function (req, res) {
             message: "Anda Salah Tempat Parkir"
         })
     }
+
+
+
+}
+controller.gate3 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_done: 0 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "A2") {
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
+                parkir.update({
+                    parkir_status: 1
+                })
+
+            } else if (parkir.parkir_status == true) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
+                })
+            }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
+    } else {
+        res.status(400).json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate4 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_done: 0 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "B1") {
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
+                parkir.update({
+                    parkir_status: 1
+                })
+
+            } else if (parkir.parkir_status == true) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
+                })
+            }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
+    } else {
+        res.status(400).json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate5 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_done: 0 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "B2") {
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
+                parkir.update({
+                    parkir_status: 1
+                })
+
+            } else if (parkir.parkir_status == true) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
+                })
+            }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
+    } else {
+        res.status(400).json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
+
+
+}
+
+controller.gate6 = async function (req, res) {
+
+    const uid = req.body.uid
+
+    let parkir = await model.parkir.findOne({
+        where: { uid: uid, parkir_done: 0 },
+        order: [['parkir_masuk', 'DESC']],
+    })
+
+    console.log(parkir);
+    let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
+
+    const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
+
+    if (CheckParkir.lokasi_nama == "C1") {
+
+        if (parkir_done == false) {
+            if (parkir.parkir_done == false) {
+                if (parkir.parkir_status == false) {
+                    parkir.update({
+                        parkir_status: 1
+                    })
+
+                } else if (parkir.parkir_status == true) {
+                    parkir.update({
+                        parkir_status: 0,
+                        parkir_done: 1
+                    })
+                }
+                res.status(200).json({
+                    status: "success",
+                    message: "Silahkan Masuk"
+                })
+            } else {
+                res.status(400).json({
+                    status: "failed",
+                    message: "anda sudah melakukan parkir"
+                })
+            }
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
+
+    } else {
+        res.status(400).json({
+            status: "failed",
+            message: "Anda Salah Tempat Parkir"
+        })
+    }
 }
 
 
@@ -564,7 +642,7 @@ controller.gate7 = async function (req, res) {
     const uid = req.body.uid
 
     let parkir = await model.parkir.findOne({
-        where: { uid: uid, parkir_status: 1 },
+        where: { uid: uid, parkir_done: 0 },
         order: [['parkir_masuk', 'DESC']],
     })
     console.log(parkir);
@@ -573,10 +651,28 @@ controller.gate7 = async function (req, res) {
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "C2") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
+        if (parkir.parkir_done == false) {
+            if (parkir.parkir_status == false) {
+                parkir.update({
+                    parkir_status: 1
+                })
+
+            } else if (parkir.parkir_status == true) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
+                })
+            }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
     } else {
         res.status(400).json({
             status: "failed",
