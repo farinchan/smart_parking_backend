@@ -3,6 +3,7 @@ var admin = require("firebase-admin");
 const { Op } = require('sequelize');
 
 var serviceAccount = require("../smart-paarking-firebase-adminsdk-nr2hq-4c48e47ee7.json");
+const { parkir } = require(".");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -38,7 +39,7 @@ controller.index = async function (req, res) {
                 parkir_keluar: "",
                 parkir_foto_kendaraan: foto_kendaraan,
                 parkir_tarif: tarif_kendaraan,
-                parkir_status: 1,
+                parkir_status: 0,
                 lokasi_id: 0
             })
             saldo.update({
@@ -515,16 +516,40 @@ controller.gate6 = async function (req, res) {
         where: { uid: uid, parkir_status: 1 },
         order: [['parkir_masuk', 'DESC']],
     })
+
+
+
+
     console.log(parkir);
     let lokasiParkir = await model.LokasiParkir.findByPk(parkir.lokasi_id)
 
     const CheckParkir = { ...parkir.dataValues, ...lokasiParkir.dataValues }
 
     if (CheckParkir.lokasi_nama == "C1") {
-        res.status(200).json({
-            status: "success",
-            message: "Silahkan Masuk"
-        })
+
+        if (parkir_done == false) {
+            if (parkir.parkir_status == 0) {
+                parkir.update({
+                    parkir_status: 1
+                })
+
+            } else if (parkir.parkir_status == 1) {
+                parkir.update({
+                    parkir_status: 0,
+                    parkir_done: 1
+                })
+            }
+            res.status(200).json({
+                status: "success",
+                message: "Silahkan Masuk"
+            })
+        } else {
+            res.status(400).json({
+                status: "failed",
+                message: "anda sudah melakukan parkir"
+            })
+        }
+
     } else {
         res.status(400).json({
             status: "failed",

@@ -18,5 +18,5 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use("/api", Routes)
 
 app.listen(5000, () => {
-    console.log("Server is running on example http://localhost:3000");
+    console.log("Server is running on example http://localhost:5000");
 });

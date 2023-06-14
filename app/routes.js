@@ -31,6 +31,10 @@ router.get('/saldo', tokenValidate, controller.saldo.index);
 router.post('/voucher/topup', tokenValidate, controller.voucher.topup);
 
 router.get('/parkir/tracking', tokenValidate, controller.parkir.index);
+router.post('/parkir/riwayat', tokenValidate, controller.parkir.riwayat);
+
+router.post('/parkir/change', tokenValidate, controller.parkir.changeParkir);
+router.post('/parkir/confirm', tokenValidate, controller.parkir.pesanParkir);
 
 //API From Rapberry PI - Gate 1
 router.post('/scan', upload.single('picture'), controller.microcontroller.index);
